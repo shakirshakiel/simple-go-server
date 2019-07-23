@@ -5,4 +5,4 @@ services:
     build: build-env
     working_dir: /code/src/github.com/shakirshakiel/simple-go-server
     volumes:
-      - "../../:/code/src/github.com/shakirshakiel/simple-go-server"
+      - "../:/code/src/github.com/shakirshakiel/simple-go-server"

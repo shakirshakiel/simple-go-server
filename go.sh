@@ -22,12 +22,12 @@ function main {
 }
 
 function depinstall {
-  echoGreenText 'Installing dependencies...'
+  echo 'Installing dependencies...'
   runCommandInBuildContainer dep ensure
 }
 
 function setup {
-  echoGreenText 'Downloading dependencies...'
+  echo 'Downloading dependencies...'
   runCommandInBuildContainer dep ensure -vendor-only
 }
 
@@ -36,35 +36,35 @@ function assureSetup {
 }
 
 function build {
-  echoGreenText 'Building application...'
+  echo 'Building application...'
   assureSetup
-  runCommandInBuildContainer sh -c "go build -o infrastructure/dev/app/app main/main.go"
+  runCommandInBuildContainer sh -c "go build -o infrastructure/app/app main/main.go"
 
-  echoGreenText 'Building application image...'
+  echo 'Building application image...'
   GIT_HASH=$(git rev-parse --short=8 HEAD)
-  docker build -t "shakirshakiel/goserver:$GIT_HASH" "$SOURCE_DIR/infrastructure/dev/app"
+  docker build -t "shakirshakiel/goserver:$GIT_HASH" "$SOURCE_DIR/infrastructure/app"
 }
 
 function run {
-  echoGreenText 'Running application...'
+  echo 'Running application...'
   assureSetup
-  runCommandInContainer "$SOURCE_DIR/infrastructure/dev/run.yml" app
+  runCommandInContainer "$SOURCE_DIR/infrastructure/run.yml" app
 }
 
 function unitTest {
-  echoGreenText 'Running unit tests...'
+  echo 'Running unit tests...'
   assureSetup
   runCommandInBuildContainer sh -c "ginkgo $@ -cover -tags unitTests ./..."
 }
 
 function lint {
-  echoGreenText 'Running linter...'
+  echo 'Running linter...'
   assureSetup
   runCommandInBuildContainer sh -c "go list ./... | grep -v vendor | xargs go vet -v"
 }
 
 function runCommandInBuildContainer {
-  runCommandInContainer "$SOURCE_DIR/infrastructure/dev/build-env.yml" build-env "$@"
+  runCommandInContainer "$SOURCE_DIR/infrastructure/build-env.yml" build-env "$@"
 }
 
 function runCommandInContainer {
@@ -73,39 +73,6 @@ function runCommandInContainer {
   command=( "${@:3}" )
 
   docker-compose --project-name "$PROJECT_NAME" -f "$env" run --service-ports --rm "$container" "${command[@]}"
-}
-
-function echoGreenText {
-  if [[ "${TERM:-dumb}" == "dumb" ]]; then
-    echo "${@}"
-  else
-    RESET=$(tput sgr0)
-    GREEN=$(tput setaf 2)
-
-    echo "${GREEN}${@}${RESET}"
-  fi
-}
-
-function echoRedText {
-  if [[ "${TERM:-dumb}" == "dumb" ]]; then
-    echo "${@}"
-  else
-    RESET=$(tput sgr0)
-    RED=$(tput setaf 1)
-
-    echo "${RED}${@}${RESET}"
-  fi
-}
-
-function echoWhiteText {
-  if [[ "${TERM:-dumb}" == "dumb" ]]; then
-     echo "${@}"
-  else
-    RESET=$(tput sgr0)
-    WHITE=$(tput setaf 7)
-
-    echo "${WHITE}${@}${RESET}"
-  fi
 }
 
 main "$@"
