@@ -1,0 +1,7 @@
+version: '3.7'
+
+services:
+  app:
+    build: app
+    ports:
+      - "1024:1024"
