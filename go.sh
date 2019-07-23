@@ -54,13 +54,13 @@ function run {
 function unitTest {
   echo 'Running unit tests...'
   assureSetup
-  runCommandInBuildContainer sh -c "ginkgo $@ -cover -tags unitTests ./..."
+  runCommandInBuildContainer sh -c "go test ./main"
 }
 
 function lint {
   echo 'Running linter...'
   assureSetup
-  runCommandInBuildContainer sh -c "go list ./... | grep -v vendor | xargs go vet -v"
+  runCommandInBuildContainer sh -c "go list ./main | xargs go vet -v"
 }
 
 function runCommandInBuildContainer {
