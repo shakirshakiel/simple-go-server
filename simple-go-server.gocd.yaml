@@ -1,0 +1,33 @@
+format_version: 3
+pipelines:
+  simple-go-server:
+    group: defaultGroup
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    materials:
+      git:
+        git: https://github.com/shakirshakiel/simple-go-server.git
+        shallow_clone: false
+        auto_update: true
+        branch: master
+    parameters:
+      BRANCH: master
+      VERSION: '1.0'
+    stages:
+    - publish:
+        fetch_materials: true
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          test:
+            timeout: 0
+            tasks:
+            - exec:
+                arguments:
+                - '#{BRANCH} - #{VERSION}'
+                command: echo
+                run_if: passed
