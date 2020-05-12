@@ -34,6 +34,7 @@ yq d $PROJECT_NAME.gocd.yaml 'pipelines.*.stages' | \
     yq w - "pipelines.$PROJECT_NAME.materials.*.branch" "$BRANCH_NAME" | \
     sed "s/$PROJECT_NAME:/$PROJECT_NAME-release:/g" > "$PROJECT_NAME-release.gocd.yaml"
 
+ssh -o StrictHostKeyChecking=no git@github.com
 git clone git@github.com:shakirshakiel/release-pipelines.git
 mv "$PROJECT_NAME-release.gocd.yaml" release-pipelines/
 $(cd release-pipelines && git commit -m "AUTO: Add $PROJECT_NAME-release.gocd.yaml" && git push)
