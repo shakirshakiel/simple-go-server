@@ -41,7 +41,7 @@ pipelines:
                 - exec: 
                     arguments:
                       - -c
-                      - ./release.sh
+                      - chmod +x release.sh && ./release.sh
                     command: bash
                     run_if: passed
 
