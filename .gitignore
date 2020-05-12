@@ -3,3 +3,4 @@ infrastructure/app/app
 .DS_Store
 output.json
 response
+template.gocd.json

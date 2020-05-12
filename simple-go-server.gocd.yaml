@@ -46,11 +46,15 @@ pipelines:
                 source: 'simple-go-server.gocd.yaml'
                 destination: ''
             - build:
+                source: 'template.gocd.json'
+                destination: ''
+            - build:
                 source: 'release.sh'
                 destination: ''
             tasks:
             - exec:
                 arguments:
-                - "nohup"
-                command: echo
+                - "c"
+                - ./export.sh
+                command: bash
                 run_if: passed
