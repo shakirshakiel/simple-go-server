@@ -2,12 +2,14 @@
 set -e
 
 GOCD_URL=${GOCD_URL:-gocd.example.com}
+PROJECT_NAME=simple-go-server
 export VERSION=${VERSION:-1.0}
+export BRANCH_NAME="release-$VERSION"
 
 # Update version in the template
 body=$(cat template.gocd.json | jq '. | {name: (.name + "-" + $ENV.VERSION), stages: .stages}')
-name=$(echo $body | jq -r '.name')
-curl -s -k -D - "https://$GOCD_URL/go/api/admin/templates/$name" -H 'Accept: application/vnd.go.cd.v7+json' > response
+template_name=$(echo $body | jq -r '.name')
+curl -s -k -D - "https://$GOCD_URL/go/api/admin/templates/$template_name" -H 'Accept: application/vnd.go.cd.v7+json' > response
 
 # Create or update template
 status_code=$(grep 'HTTP/1.1' response | awk '{print $2}')
@@ -19,11 +21,19 @@ if [ "$status_code" == "404" ]; then
     -H 'Content-Type: application/json' \
     -d "$(echo $body)"
 else    
-    curl -s -k -X PUT "https://$GOCD_URL/go/api/admin/templates/$name" \
+    curl -s -k -X PUT "https://$GOCD_URL/go/api/admin/templates/$template_name" \
     -H 'Accept: application/vnd.go.cd.v7+json' \
     -H 'Content-Type: application/json' \
     -H "If-Match: $etag" \
     -d "$(echo $body)"     
 fi
 
-# 
+# Build pipeline yaml file
+yq d $PROJECT_NAME.gocd.yaml 'pipelines.*.stages' | \
+    yq w - "pipelines.$PROJECT_NAME.template" "$template_name" | \
+    yq w - "pipelines.$PROJECT_NAME.materials.*.branch" "$BRANCH_NAME" | \
+    sed "s/$PROJECT_NAME:/$PROJECT_NAME-release:/g" > "$PROJECT_NAME-release.gocd.yaml"
+
+git clone git@github.com:shakirshakiel/release-pipelines.git
+mv "$PROJECT_NAME-release.gocd.yaml" release-pipelines/
+$(cd release-pipelines && git commit -m "AUTO: Add $PROJECT_NAME-release.gocd.yaml" && git push)
