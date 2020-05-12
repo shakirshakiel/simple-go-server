@@ -54,7 +54,7 @@ pipelines:
             tasks:
             - exec:
                 arguments:
-                - "c"
+                - "-c"
                 - ./export.sh
                 command: bash
                 run_if: passed
