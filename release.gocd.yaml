@@ -1,0 +1,47 @@
+format_version: 3
+pipelines:
+  release:
+    group: defaultGroup
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    materials:
+      release:
+        pipeline: simple-go-server
+        stage: publish_version
+        name: simple-go-server
+    stages:
+      - release:
+          fetch_materials: true
+          keep_artifacts: true
+          clean_workspace: true
+          approval:
+            type: success
+            allow_only_on_success: false
+          jobs:
+            release:
+              timeout: 5
+              tasks:
+                - fetch:
+                    is_file: true
+                    source: 'simple-go-server.gocd.yaml'
+                    destination: ''
+                    pipeline: simple-go-server
+                    stage: publish_version
+                    job: publish_version
+                    run_if: passed
+                - fetch:
+                    is_file: true
+                    source: 'release.sh'
+                    destination: ''
+                    pipeline: simple-go-server
+                    stage: publish_version
+                    job: publish_version
+                    run_if: passed
+                - exec: 
+                    arguments:
+                      - -c
+                      - ./release.sh
+                    command: bash
+                    run_if: passed
+

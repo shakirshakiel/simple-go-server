@@ -15,19 +15,37 @@ pipelines:
       BRANCH: master
       VERSION: '1.0'
     stages:
-    - publish:
+    - build:
         fetch_materials: true
-        keep_artifacts: false
-        clean_workspace: false
+        keep_artifacts: true
+        clean_workspace: true
         approval:
           type: success
           allow_only_on_success: false
         jobs:
           test:
-            timeout: 0
+            timeout: 5
             tasks:
             - exec:
                 arguments:
                 - '#{BRANCH} - #{VERSION}'
                 command: echo
                 run_if: passed
+    - publish_version:
+        fetch_materials: true
+        keep_artifacts: true
+        clean_workspace: true
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          publish_version:
+            timeout: 5
+            tasks:
+            artifacts:              
+            - build:
+                source: 'simple-go-server.gocd.yaml'
+                destination: ''
+            - build:
+                source: 'release.sh'
+                destination: ''
