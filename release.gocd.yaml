@@ -32,6 +32,14 @@ pipelines:
                     run_if: passed
                 - fetch:
                     is_file: true
+                    source: 'template.gocd.json'
+                    destination: ''
+                    pipeline: simple-go-server
+                    stage: publish_version
+                    job: publish_version
+                    run_if: passed
+                - fetch:
+                    is_file: true
                     source: 'release.sh'
                     destination: ''
                     pipeline: simple-go-server
