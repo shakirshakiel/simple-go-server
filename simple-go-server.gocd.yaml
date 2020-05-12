@@ -41,7 +41,6 @@ pipelines:
         jobs:
           publish_version:
             timeout: 5
-            tasks:
             artifacts:              
             - build:
                 source: 'simple-go-server.gocd.yaml'
@@ -49,3 +48,9 @@ pipelines:
             - build:
                 source: 'release.sh'
                 destination: ''
+            tasks:
+            - exec:
+                arguments:
+                - "nohup"
+                command: echo
+                run_if: passed
