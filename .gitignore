@@ -1,3 +1,5 @@
 vendor
 infrastructure/app/app
 .DS_Store
+output.json
+response

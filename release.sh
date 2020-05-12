@@ -17,12 +17,12 @@ if [ "$status_code" == "404" ]; then
     curl -s -k -X POST "https://$GOCD_URL/go/api/admin/templates" \
     -H 'Accept: application/vnd.go.cd.v7+json' \
     -H 'Content-Type: application/json' \
-    --data-raw "$(echo $body)"
+    -d "$(echo $body)"
 else    
     curl -s -k -X PUT "https://$GOCD_URL/go/api/admin/templates/$name" \
     -H 'Accept: application/vnd.go.cd.v7+json' \
     -H 'Content-Type: application/json' \
     -H "If-Match: $etag" \
-    --data-raw "$(echo $body)"     
+    -d "$(echo $body)"     
 fi
 
