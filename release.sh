@@ -3,7 +3,7 @@ set -e
 
 GOCD_URL=${GOCD_URL:-gocd.example.com}
 PROJECT_NAME=simple-go-server
-export VERSION=${VERSION:-1.1}
+export VERSION=${VERSION:-1.2}
 export BRANCH_NAME="release-$VERSION"
 
 # Update version in the template
@@ -46,5 +46,10 @@ git config --global push.default simple
 mv "$PROJECT_NAME-release.gocd.yaml" release-pipelines/
 cd release-pipelines 
 git add . 
-git commit -m "AUTO: Add $PROJECT_NAME-release.gocd.yaml"
-git push
+
+if [ -z "$(git status --porcelain)" ]; then 
+    git commit -m "AUTO: Add $PROJECT_NAME-release.gocd.yaml"
+    git push
+else
+    echo "Pipelines are upto date"
+fi
