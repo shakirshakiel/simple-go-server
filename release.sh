@@ -46,14 +46,13 @@ git config --global push.default simple
 cd release-pipelines 
 
 if [ -z "$(git ls-remote --heads origin $BRANCH_NAME)" ]; then
-    git checkout $BRANCH_NAME    
-else
     git checkout -b $BRANCH_NAME
     git push origin $BRANCH_NAME   
     git checkout master 
     git branch -D $BRANCH_NAME
-    git checkout $BRANCH_NAME --track
 fi
+
+git checkout $BRANCH_NAME    
 
 mv "../$PROJECT_NAME-release.gocd.yaml" .
 git add . 
