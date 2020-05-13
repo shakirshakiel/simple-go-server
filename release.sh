@@ -43,13 +43,24 @@ git config --global user.name "gocd"
 git config --global user.email "gocd@gocd.org"
 git config --global push.default simple
 
-mv "$PROJECT_NAME-release.gocd.yaml" release-pipelines/
 cd release-pipelines 
+
+if [ -z "$(git ls-remote --heads origin $BRANCH_NAME)" ]; then
+    git checkout $BRANCH_NAME    
+else
+    git checkout -b $BRANCH_NAME
+    git push origin $BRANCH_NAME   
+    git checkout master 
+    git branch -D $BRANCH_NAME
+    git checkout $BRANCH_NAME --track
+fi
+
+mv "../$PROJECT_NAME-release.gocd.yaml" .
 git add . 
 
 if [ -z "$(git status --porcelain)" ]; then 
+    echo "Pipelines are upto date"
+else
     git commit -m "AUTO: Add $PROJECT_NAME-release.gocd.yaml"
     git push
-else
-    echo "Pipelines are upto date"
 fi
