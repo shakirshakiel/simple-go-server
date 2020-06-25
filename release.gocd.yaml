@@ -10,6 +10,8 @@ pipelines:
         pipeline: simple-go-server
         stage: publish_version
         name: simple-go-server
+    parameters:
+      FANIN_PIPELINE: simple-go-server
     stages:
       - release:
           fetch_materials: true
@@ -26,7 +28,7 @@ pipelines:
                     is_file: true
                     source: 'simple-go-server.gocd.yaml'
                     destination: ''
-                    pipeline: simple-go-server
+                    pipeline: '#{FANIN_PIPELINE}'
                     stage: publish_version
                     job: publish_version
                     run_if: passed
@@ -34,7 +36,7 @@ pipelines:
                     is_file: true
                     source: 'template.gocd.json'
                     destination: ''
-                    pipeline: simple-go-server
+                    pipeline: '#{FANIN_PIPELINE}'
                     stage: publish_version
                     job: publish_version
                     run_if: passed
@@ -42,7 +44,7 @@ pipelines:
                     is_file: true
                     source: 'release.sh'
                     destination: ''
-                    pipeline: simple-go-server
+                    pipeline: '#{FANIN_PIPELINE}'
                     stage: publish_version
                     job: publish_version
                     run_if: passed
