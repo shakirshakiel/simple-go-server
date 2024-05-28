@@ -16,7 +16,7 @@ jobs:
   plan:
     runs-on: ubuntu-latest
     outputs:
-      result: ${{ steps.plan.outputs.test }}
+      result: ${{ steps.plan.outputs.result }}
 
     permissions:
       contents: read
