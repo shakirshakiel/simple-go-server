@@ -28,8 +28,10 @@ jobs:
       - name: Terragrunt - ${{ inputs.environment }}/${{ inputs.module }}/plan
         id: plan
         continue-on-error: false
+        if: ${{ always() }}
         run: |
           echo "Executing plan for ${{ inputs.module }} in ${{ inputs.environment }}"
+          sleep 60
           echo ${{ env.SAMPLE_KEY }}
           echo "result=0" >> "$GITHUB_OUTPUT"
 
