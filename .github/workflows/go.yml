@@ -12,9 +12,17 @@ on:
 
 jobs:
 
-  build:
+  dev:
     uses: ./.github/workflows/workflow.yml
     with:
       environment: dev
       module: network
     secrets: inherit
+
+  uat:
+    needs: [dev]
+    uses: ./.github/workflows/workflow.yml
+    with:
+      environment: uat
+      module: network
+    secrets: inherit    
