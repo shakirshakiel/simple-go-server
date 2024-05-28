@@ -12,6 +12,9 @@ on:
         required: true
         type: string
 
+env:
+  SAMPLE_KEY: abcdefgh 
+
 jobs:
   plan:
     runs-on: ubuntu-latest
@@ -27,6 +30,7 @@ jobs:
         continue-on-error: false
         run: |
           echo "Executing plan for ${{ inputs.module }} in ${{ inputs.environment }}"
+          echo ${{ env.SAMPLE_KEY }}
           echo "result=0" >> "$GITHUB_OUTPUT"
 
   plan2:
