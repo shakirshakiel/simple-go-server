@@ -1,18 +1,20 @@
-# This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
-
-name: Go
+name: CICD (Dev, UAT)
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - main
+    paths-ignore:
+      - .gitignore
+      - README.md
+
+  workflow_dispatch:
 
 jobs:
 
   build:
-    runs-on: self-hosted
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Run a one-line script
-      run: echo Hello, world!
+    uses: ./.github/workflows/workflow.yml
+    with:
+      environment: dev
+      module: network
+    secrets: inherit

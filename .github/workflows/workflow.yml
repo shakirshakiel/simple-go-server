@@ -1,0 +1,42 @@
+name: workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "Name of the environment"
+        required: true
+        type: string
+      module:
+        description: "Name of the module"
+        required: true
+        type: string
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Terragrunt - ${{ inputs.environment }}/${{ inputs.module }}/plan
+        continue-on-error: false
+        run: |
+          echo "Executing plan for ${{ inputs.module }} in ${{ inputs.environment }}"
+
+  apply:
+    runs-on: ubuntu-latest
+    needs: [ plan ]
+    environment: ${{ inputs.environment }}
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Terragrunt - ${{ inputs.environment }}/${{ inputs.module }}/apply
+        continue-on-error: false
+        run: |
+          echo "Executing apply for ${{ inputs.module }} in ${{ inputs.environment }}"
