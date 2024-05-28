@@ -48,7 +48,7 @@ jobs:
     needs: [ plan ]
     environment: ${{ inputs.environment }}
     concurrency: ${{ inputs.environment }}
-    if: ${{ needs.plan.outputs.result == 0 }}
+    if: needs.plan.outputs.result == '0'
 
     permissions:
       contents: read
