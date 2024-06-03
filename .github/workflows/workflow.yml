@@ -31,23 +31,8 @@ jobs:
         if: ${{ always() }}
         run: |
           echo "Executing plan for ${{ inputs.module }} in ${{ inputs.environment }}"
-          sleep 60
           echo ${{ env.SAMPLE_KEY }}
           echo "result=0" >> "$GITHUB_OUTPUT"
-
-  plan2:
-    runs-on: ubuntu-latest
-    needs: [ plan ]
-
-    permissions:
-      contents: read
-
-    steps:
-      - name: Terragrunt - ${{ inputs.environment }}/${{ inputs.module }}/plan
-        continue-on-error: false
-        run: |
-          echo "Result = ${{ needs.plan.outputs.result }}"
-          echo "Test condition ${{ needs.plan.outputs.result == 0 }}"
 
   approval:
     runs-on: ubuntu-latest
@@ -64,3 +49,17 @@ jobs:
         continue-on-error: false
         run: |
           echo "Executing approval for ${{ inputs.module }} in ${{ inputs.environment }}"
+
+  postapproval:
+    runs-on: ubuntu-latest
+    needs: [ approval ]
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Post Approval - ${{ inputs.environment }}/${{ inputs.module }}/plan
+        continue-on-error: false
+        run: |
+          echo "Post approval for ${{ inputs.module }} in ${{ inputs.environment }}"
+
